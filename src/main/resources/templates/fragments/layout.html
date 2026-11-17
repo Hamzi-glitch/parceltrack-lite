@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<!--
+  Shared layout fragments. Use them in every page:
+    <head th:replace="~{fragments/layout :: head('Page title')}"></head>
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+  Always print user data with th:text, never th:utext (XSS).
+-->
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${title} + ' | ParcelTrack Lite'">ParcelTrack Lite</title>
+    <link rel="stylesheet" th:href="@{/vendor/bootstrap/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+
+<nav th:fragment="navbar" class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
+    <div class="container">
+        <a class="navbar-brand" th:href="@{/}">ParcelTrack Lite</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
+                aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="mainNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item"><a class="nav-link" th:href="@{/track}">Track a parcel</a></li>
+                <!-- Hidden links are convenience only; the server must still check every request. -->
+                <li class="nav-item" sec:authorize="hasRole('SELLER')"><a class="nav-link" th:href="@{/seller/parcels}">My parcels</a></li>
+                <li class="nav-item" sec:authorize="hasRole('RIDER')"><a class="nav-link" th:href="@{/rider/parcels}">My deliveries</a></li>
+                <li class="nav-item" sec:authorize="hasRole('ADMIN')"><a class="nav-link" th:href="@{/admin/dashboard}">Admin</a></li>
+            </ul>
+            <div class="d-flex align-items-center gap-2">
+                <span sec:authorize="isAuthenticated()" class="navbar-text small" sec:authentication="name">user</span>
+                <form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="post" class="m-0">
+                    <button type="submit" class="btn btn-outline-light btn-sm">Log out</button>
+                </form>
+                <a sec:authorize="!isAuthenticated()" class="btn btn-outline-light btn-sm" th:href="@{/login}">Log in</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<footer th:fragment="footer" class="container text-muted small py-4 mt-5 border-top">
+    ParcelTrack Lite &middot; STTCK3033 Secure Software Development &middot; Group 6
+    <script th:src="@{/vendor/bootstrap/bootstrap.bundle.min.js}"></script>
+</footer>
+
+</body>
+</html>

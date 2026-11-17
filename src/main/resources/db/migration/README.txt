@@ -1,0 +1,2 @@
+-- Flyway migrations live here (M2 owns these).
+-- Name them V1__create_schema.sql, V2__..., and never edit a migration after it is pushed.
