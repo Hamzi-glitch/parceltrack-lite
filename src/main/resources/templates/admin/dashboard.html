@@ -8,6 +8,26 @@
     <div th:if="${param.created}" class="alert alert-success">Rider account created.</div>
     <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
 
+    <!-- M3: parcel counts by delivery status, counted from the database. -->
+    <section th:if="${statusCounts != null}" class="mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <h2 class="h5 mb-0">Parcels by status
+                <span class="text-muted small" th:text="'(' + ${totalParcels} + ' total)'">(0 total)</span>
+            </h2>
+            <a th:href="@{/admin/parcels}" class="btn btn-primary btn-sm">Assign parcels to Riders</a>
+        </div>
+        <div class="row g-3">
+            <div class="col-6 col-md" th:each="entry : ${statusCounts}">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <div class="display-6" th:text="${entry.value}">0</div>
+                        <div class="text-muted small" th:text="${entry.key.label}">Status</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <div class="card mb-4">
         <div class="card-body">
             <h2 class="h5">Create Rider account</h2>

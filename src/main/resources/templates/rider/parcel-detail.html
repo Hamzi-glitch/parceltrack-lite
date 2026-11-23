@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Delivery')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<main class="container" th:with="p=${detail.parcel}">
+    <a th:href="@{/rider/parcels}" class="small">&larr; My deliveries</a>
+    <h1 class="h3 mt-2 mb-3">Parcel <span class="font-monospace" th:text="${p.trackingNumber}">PT-XXXX</span></h1>
+
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h2 class="h5">Delivery details</h2>
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">Status</dt>
+                        <dd class="col-sm-8"><span class="badge text-bg-secondary" th:text="${p.status.label}">Assigned</span></dd>
+                        <dt class="col-sm-4">Recipient</dt>
+                        <dd class="col-sm-8" th:text="${p.recipientName}">Name</dd>
+                        <dt class="col-sm-4">Phone</dt>
+                        <dd class="col-sm-8" th:text="${p.recipientPhone}">Phone</dd>
+                        <dt class="col-sm-4">Address</dt>
+                        <dd class="col-sm-8" th:text="${p.recipientAddress}">Address</dd>
+                    </dl>
+                </div>
+            </div>
+
+            <div class="card mb-4" th:unless="${#sets.isEmpty(detail.allowedNextStatuses)}">
+                <div class="card-body">
+                    <h2 class="h5">Update status</h2>
+                    <form th:action="@{/rider/parcels/{id}/status(id=${p.id})}" method="post">
+                        <div class="mb-3">
+                            <label for="status" class="form-label">New status</label>
+                            <select id="status" name="status" class="form-select" required>
+                                <option th:each="s : ${detail.allowedNextStatuses}" th:value="${s.name()}"
+                                        th:text="${s.label}">Status</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="remarks" class="form-label">Remarks <span class="text-muted small">(required if Failed)</span></label>
+                            <input id="remarks" name="remarks" class="form-control" maxlength="255">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save status</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card mb-4" th:if="${detail.canUploadProof}">
+                <div class="card-body">
+                    <h2 class="h5">Proof of delivery</h2>
+                    <p class="small text-muted">One JPG or PNG photo, up to 2 MB.</p>
+                    <form th:action="@{/rider/parcels/{id}/proof(id=${p.id})}" method="post" enctype="multipart/form-data">
+                        <input type="file" name="photo" class="form-control mb-3" accept=".jpg,.jpeg,.png,image/jpeg,image/png" required>
+                        <button type="submit" class="btn btn-primary">Upload photo</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card mb-4" th:if="${detail.hasProof}">
+                <div class="card-body">
+                    <h2 class="h5">Proof of delivery</h2>
+                    <img th:src="@{/rider/parcels/{id}/proof(id=${p.id})}" alt="Proof of delivery photo" class="img-fluid rounded border">
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <h2 class="h5">History</h2>
+            <p th:if="${#lists.isEmpty(detail.history)}" class="text-muted">No status changes yet.</p>
+            <ul class="list-group" th:unless="${#lists.isEmpty(detail.history)}">
+                <li class="list-group-item" th:each="h : ${detail.history}">
+                    <div class="d-flex justify-content-between">
+                        <strong th:text="${h.status.label}">Status</strong>
+                        <span class="small text-muted" th:text="${#temporals.format(h.changedAt, 'dd MMM yyyy HH:mm')}">date</span>
+                    </div>
+                    <div class="small text-muted" th:text="'By ' + ${h.changedBy}">By user</div>
+                    <div class="small" th:if="${h.remarks}" th:text="${h.remarks}">Remarks</div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>
