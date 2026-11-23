@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Admin dashboard')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<main class="container">
+    <h1 class="h3 mb-3">Admin dashboard</h1>
+    <div th:if="${param.created}" class="alert alert-success">Rider account created.</div>
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <h2 class="h5">Create Rider account</h2>
+            <form th:action="@{/admin/riders}" th:object="${rider}" method="post">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label for="fullName" class="form-label">Full name</label>
+                        <input id="fullName" th:field="*{fullName}" class="form-control" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="email" class="form-label">Email</label>
+                        <input id="email" th:field="*{email}" type="email" class="form-control" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="riderPassword" class="form-label">Temporary password</label>
+                        <input id="riderPassword" th:field="*{password}" type="password" class="form-control"
+                               minlength="10" autocomplete="new-password" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary mt-3">Create Rider</button>
+            </form>
+        </div>
+    </div>
+
+    <h2 class="h5">Rider accounts</h2>
+    <table class="table">
+        <thead><tr><th>Name</th><th>Email</th><th>Status</th></tr></thead>
+        <tbody>
+        <tr th:each="rider : ${riders}">
+            <td th:text="${rider.fullName}"></td>
+            <td th:text="${rider.email}"></td>
+            <td th:text="${rider.enabled ? 'Enabled' : 'Disabled'}"></td>
+        </tr>
+        </tbody>
+    </table>
+    <a th:href="@{/change-password}" class="btn btn-outline-primary">Change password</a>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>
