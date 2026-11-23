@@ -34,6 +34,8 @@
             </ul>
             <div class="d-flex align-items-center gap-2">
                 <span sec:authorize="isAuthenticated()" class="navbar-text small" sec:authentication="name">user</span>
+                <a sec:authorize="isAuthenticated()" class="btn btn-outline-light btn-sm"
+                   th:href="@{/change-password}">Change password</a>
                 <form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="post" class="m-0">
                     <button type="submit" class="btn btn-outline-light btn-sm">Log out</button>
                 </form>
