@@ -75,19 +75,8 @@ public class UserController {
         return "seller/parcels";
     }
 
-    @GetMapping("/rider/parcels")
-    public String riderPage() {
-        return "rider/parcels";
-    }
-
-    @GetMapping("/admin/dashboard")
-    public String adminDashboard(Model model) {
-        model.addAttribute("riders", userRepository.findAll().stream()
-                .filter(user -> user.getRole() == Role.RIDER)
-                .toList());
-        model.addAttribute("rider", new RiderRequest());
-        return "admin/dashboard";
-    }
+    // GET /rider/parcels and GET /admin/dashboard are served by M3
+    // (com.parceltrack.delivery.DeliveryController / AdminDashboardController).
 
     @PostMapping("/admin/riders")
     public String createRider(@Validated @ModelAttribute("rider") RiderRequest request,

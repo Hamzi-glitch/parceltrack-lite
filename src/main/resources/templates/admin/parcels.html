@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Assign parcels')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<main class="container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h3 mb-0">Assign parcels to Riders</h1>
+        <a th:href="@{/admin/dashboard}" class="btn btn-outline-secondary btn-sm">Back to dashboard</a>
+    </div>
+
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+    <div th:if="${#lists.isEmpty(riderOptions)}" class="alert alert-warning">
+        There are no active Rider accounts yet. Create one on the dashboard first.
+    </div>
+
+    <p th:if="${#lists.isEmpty(parcels)}" class="text-muted">There are no parcels waiting for delivery.</p>
+
+    <table th:unless="${#lists.isEmpty(parcels)}" class="table align-middle">
+        <thead>
+        <tr><th>Tracking number</th><th>Status</th><th>Current Rider</th><th>Assign to</th></tr>
+        </thead>
+        <tbody>
+        <tr th:each="p : ${parcels}">
+            <td class="font-monospace" th:text="${p.trackingNumber}">PT-XXXX</td>
+            <td><span class="badge text-bg-secondary" th:text="${p.status.label}">Registered</span></td>
+            <td th:text="${p.currentRiderName != null ? p.currentRiderName : 'Not assigned'}">Not assigned</td>
+            <td>
+                <form th:action="@{/admin/parcels/{id}/assign(id=${p.parcelId})}" method="post"
+                      class="d-flex gap-2">
+                    <select name="riderId" class="form-select form-select-sm" required
+                            th:disabled="${#lists.isEmpty(riderOptions)}">
+                        <option value="">Choose a Rider</option>
+                        <option th:each="r : ${riderOptions}" th:value="${r.id}" th:text="${r.fullName}"
+                                th:selected="${r.id == p.currentRiderId}">Rider</option>
+                    </select>
+                    <button type="submit" class="btn btn-primary btn-sm"
+                            th:disabled="${#lists.isEmpty(riderOptions)}">Assign</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

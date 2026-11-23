@@ -1,12 +1,28 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/layout :: head('Rider deliveries')}"></head>
+<head th:replace="~{fragments/layout :: head('My deliveries')}"></head>
 <body>
 <nav th:replace="~{fragments/layout :: navbar}"></nav>
 <main class="container">
-    <h1 class="h3">Rider dashboard</h1>
-    <p>Assigned deliveries will appear here.</p>
-    <a th:href="@{/change-password}" class="btn btn-outline-primary">Change password</a>
+    <h1 class="h3 mb-3">My deliveries</h1>
+
+    <p th:if="${#lists.isEmpty(parcels)}" class="text-muted">No parcels are assigned to you right now.</p>
+
+    <table th:unless="${#lists.isEmpty(parcels)}" class="table align-middle">
+        <thead>
+        <tr><th>Tracking number</th><th>Recipient</th><th>Address</th><th>Status</th><th>Assigned</th><th></th></tr>
+        </thead>
+        <tbody>
+        <tr th:each="a : ${parcels}">
+            <td class="font-monospace" th:text="${a.parcel.trackingNumber}">PT-XXXX</td>
+            <td th:text="${a.parcel.recipientName}">Name</td>
+            <td th:text="${a.parcel.recipientAddress}">Address</td>
+            <td><span class="badge text-bg-secondary" th:text="${a.parcel.status.label}">Assigned</span></td>
+            <td th:text="${#temporals.format(a.assignedAt, 'dd MMM yyyy HH:mm')}">date</td>
+            <td><a th:href="@{/rider/parcels/{id}(id=${a.parcel.id})}" class="btn btn-sm btn-outline-primary">Open</a></td>
+        </tr>
+        </tbody>
+    </table>
 </main>
 <footer th:replace="~{fragments/layout :: footer}"></footer>
 </body>
