@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Register a parcel')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<main class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-7">
+            <h1 class="h3 mb-3">Register a parcel</h1>
+            <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+            <!-- The server checks every field again. There are no maxlength or number-only browser
+                 limits on purpose, so the server-side validation can be demonstrated and tested. -->
+            <form th:action="@{/seller/parcels}" th:object="${parcelForm}" method="post" novalidate>
+                <div class="mb-3">
+                    <label for="recipientName" class="form-label">Recipient name</label>
+                    <input id="recipientName" th:field="*{recipientName}" class="form-control" autocomplete="off">
+                    <div th:errors="*{recipientName}" class="text-danger small"></div>
+                </div>
+                <div class="mb-3">
+                    <label for="recipientPhone" class="form-label">Recipient phone</label>
+                    <input id="recipientPhone" th:field="*{recipientPhone}" type="tel" class="form-control"
+                           placeholder="0123456789 or +60123456789" autocomplete="off">
+                    <div th:errors="*{recipientPhone}" class="text-danger small"></div>
+                </div>
+                <div class="mb-3">
+                    <label for="recipientAddress" class="form-label">Recipient address</label>
+                    <textarea id="recipientAddress" th:field="*{recipientAddress}" class="form-control" rows="3"></textarea>
+                    <div th:errors="*{recipientAddress}" class="text-danger small"></div>
+                </div>
+                <div class="mb-3">
+                    <label for="weight" class="form-label">Weight (kg)</label>
+                    <input id="weight" th:field="*{weight}" type="text" inputmode="decimal" class="form-control"
+                           placeholder="1.50" autocomplete="off">
+                    <div th:errors="*{weight}" class="text-danger small"></div>
+                </div>
+                <button type="submit" class="btn btn-primary">Register parcel</button>
+                <a th:href="@{/seller/parcels}" class="btn btn-link">Cancel</a>
+            </form>
+        </div>
+    </div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

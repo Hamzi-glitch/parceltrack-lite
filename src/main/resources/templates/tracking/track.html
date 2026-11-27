@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Track a parcel')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<main class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-7">
+            <h1 class="h3 mb-3">Track a parcel</h1>
+
+            <!-- A plain GET form, so no login or CSRF token is needed. -->
+            <form th:action="@{/track}" method="get" class="row g-2 mb-4">
+                <div class="col">
+                    <label for="number" class="visually-hidden">Tracking number</label>
+                    <input id="number" name="number" class="form-control font-monospace" autocomplete="off"
+                           placeholder="PT-XXXX-XXXX-XXXX">
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-primary">Track</button>
+                </div>
+            </form>
+
+            <!-- Same message for every kind of miss, and the typed value is not repeated. -->
+            <div th:if="${notFound}" class="alert alert-warning">
+                We could not find a parcel for that tracking number. Please check it and try again.
+            </div>
+
+            <!-- Only the tracking number and status history are shown. No recipient details, ever. -->
+            <div th:if="${view}">
+                <h2 class="h5">
+                    <span class="font-monospace" th:text="${view.trackingNumber}">PT-XXXX-XXXX-XXXX</span>
+                    <span class="badge text-bg-primary ms-2" th:text="${view.statusLabel}">Registered</span>
+                </h2>
+                <ul class="list-group mt-3">
+                    <li th:each="e : ${view.events}" class="list-group-item d-flex justify-content-between">
+                        <span th:text="${e.statusLabel}">Registered</span>
+                        <span class="text-muted" th:text="${#temporals.format(e.changedAt, 'dd MMM yyyy HH:mm')}">date</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

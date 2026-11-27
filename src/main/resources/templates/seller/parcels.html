@@ -1,12 +1,47 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/layout :: head('Seller parcels')}"></head>
+<head th:replace="~{fragments/layout :: head('My parcels')}"></head>
 <body>
 <nav th:replace="~{fragments/layout :: navbar}"></nav>
 <main class="container">
-    <h1 class="h3">Seller dashboard</h1>
-    <p>Parcel registration features are ready for M2 integration.</p>
-    <a th:href="@{/change-password}" class="btn btn-outline-primary">Change password</a>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h3 m-0">My parcels</h1>
+        <a th:href="@{/seller/parcels/new}" class="btn btn-primary">Register a parcel</a>
+    </div>
+
+    <!-- Search only looks inside this Seller's own parcels (checked on the server). -->
+    <form th:action="@{/seller/parcels}" method="get" class="row g-2 mb-4">
+        <div class="col-md-6">
+            <label for="q" class="visually-hidden">Search</label>
+            <input id="q" name="q" type="search" class="form-control"
+                   placeholder="Search by tracking number or recipient name" th:value="${q}">
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-outline-primary">Search</button>
+            <a th:if="${!#strings.isEmpty(q)}" th:href="@{/seller/parcels}" class="btn btn-link">Clear</a>
+        </div>
+    </form>
+
+    <p th:if="${#lists.isEmpty(parcels)}" class="text-muted">
+        <span th:if="${#strings.isEmpty(q)}">You have not registered any parcels yet.</span>
+        <span th:unless="${#strings.isEmpty(q)}">No parcels match your search.</span>
+    </p>
+
+    <table th:unless="${#lists.isEmpty(parcels)}" class="table align-middle">
+        <thead>
+        <tr><th>Tracking number</th><th>Recipient</th><th>Weight (kg)</th><th>Status</th><th>Registered</th><th></th></tr>
+        </thead>
+        <tbody>
+        <tr th:each="p : ${parcels}">
+            <td class="font-monospace" th:text="${p.trackingNumber}">PT-XXXX-XXXX-XXXX</td>
+            <td th:text="${p.recipientName}">Name</td>
+            <td th:text="${p.weight}">1.00</td>
+            <td><span class="badge text-bg-secondary" th:text="${p.currentStatus.label}">Registered</span></td>
+            <td th:text="${#temporals.format(p.createdAt, 'dd MMM yyyy HH:mm')}">date</td>
+            <td><a th:href="@{/seller/parcels/{id}(id=${p.id})}" class="btn btn-sm btn-outline-primary">Open</a></td>
+        </tr>
+        </tbody>
+    </table>
 </main>
 <footer th:replace="~{fragments/layout :: footer}"></footer>
 </body>
