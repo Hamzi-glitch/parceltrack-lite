@@ -70,11 +70,7 @@ public class UserController {
         return "redirect:/seller/parcels";
     }
 
-    @GetMapping("/seller/parcels")
-    public String sellerPage() {
-        return "seller/parcels";
-    }
-
+    // GET /seller/parcels is served by M2 (com.parceltrack.parcel.ParcelController).
     // GET /rider/parcels and GET /admin/dashboard are served by M3
     // (com.parceltrack.delivery.DeliveryController / AdminDashboardController).
 

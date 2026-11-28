@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Parcel details')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<main class="container">
+    <a th:href="@{/seller/parcels}" class="small">&larr; Back to my parcels</a>
+    <h1 class="h3 mt-2 mb-3">Parcel <span class="font-monospace" th:text="${detail.parcel.trackingNumber}">PT-XXXX-XXXX-XXXX</span></h1>
+
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <h2 class="h5">Recipient</h2>
+            <dl class="row">
+                <dt class="col-sm-4">Name</dt>
+                <dd class="col-sm-8" th:text="${detail.parcel.recipientName}">Name</dd>
+                <dt class="col-sm-4">Phone</dt>
+                <dd class="col-sm-8" th:text="${detail.parcel.recipientPhone}">Phone</dd>
+                <dt class="col-sm-4">Address</dt>
+                <dd class="col-sm-8" th:text="${detail.parcel.recipientAddress}">Address</dd>
+                <dt class="col-sm-4">Weight</dt>
+                <dd class="col-sm-8"><span th:text="${detail.parcel.weight}">1.00</span> kg</dd>
+                <dt class="col-sm-4">Status</dt>
+                <dd class="col-sm-8"><span class="badge text-bg-secondary" th:text="${detail.parcel.currentStatus.label}">Registered</span></dd>
+            </dl>
+            <p class="small">
+                Customers can follow this parcel without logging in at
+                <a th:href="@{/track(number=${detail.parcel.trackingNumber})}">the public tracking page</a>.
+            </p>
+        </div>
+        <div class="col-md-6">
+            <h2 class="h5">Status history</h2>
+            <ul class="list-group">
+                <li th:each="h : ${detail.history}" class="list-group-item d-flex justify-content-between">
+                    <span th:text="${h.statusLabel}">Registered</span>
+                    <span class="text-muted" th:text="${#temporals.format(h.changedAt, 'dd MMM yyyy HH:mm')}">date</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>
